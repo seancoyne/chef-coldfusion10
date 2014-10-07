@@ -56,7 +56,7 @@ node['cf10']['updates']['urls'].each do | update |
   # Only apply an update if it or a later update doesn't exist 
   if updates_jars.select { |x| File.exists?("#{node['cf10']['installer']['install_folder']}/cfusion/lib/updates/#{x}") }.empty?
 
-    file_name = ::File.basename(update)
+    file_name = ::File.basename(update).split("?").first
     sodo_name = "cf10_#{file_name.split('.').first}_sudo"
 
     sudo sodo_name do
