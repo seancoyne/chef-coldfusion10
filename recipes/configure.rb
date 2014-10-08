@@ -19,7 +19,11 @@
 
 # Make sure CF is running
 execute "start_cf_for_coldfusion10_configure" do
-  command "/bin/true"
+  if platform_family?('windows')
+    command "true"
+  else
+    command "/bin/true"
+  end 
   notifies :start, "service[coldfusion]", :immediately
 end
 
