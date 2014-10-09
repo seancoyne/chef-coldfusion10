@@ -25,36 +25,46 @@ module CF10Providers
 
     version_file = "#{cfide_dir}/administrator/configmanager/version"
     unless ::File.exists?(version_file) && ::File.open(version_file) { |f| f.grep(/0\.3\.0/) }.length != 0
- 
-      # Make sure we have unzip package  
-      p = package "unzip" do
-        action :nothing
-      end
 
-      p.run_action(:install)
+ 			cookbook_file "config_manager" do
+ 				source "default/configmanager.zip"
+        path "#{Chef::Config['file_cache_path']}/configmanager.zip"
+        action :create_if_missing
+        mode "0744" unless platform_family?('windows')
+        owner "root" unless platform_family?('windows')
+        group "root" unless platform_family?('windows')
+      end
       
-      cf = cookbook_file "#{Chef::Config['file_cache_path']}/configmanager.zip" do
-        source "configmanager.zip"
-        cookbook "coldfusion10"
-        action :nothing
-        mode "0744"
-        owner "root"
-        group "root"
-      end
+      unless platform_family?('windows')
+	      
+	      # Make sure we have unzip package  
+	      p = package "unzip" do
+	        action :nothing
+	      end
 
-      cf.run_action(:create_if_missing) 
+	      p.run_action(:install)
 
-      # Install the application
-      e = execute "extract_configmanager" do
-      	command <<-COMMAND
-  unzip -o #{Chef::Config['file_cache_path']}/configmanager.zip -d #{cfide_dir}/administrator/configmanager
-  chown -R  #{cf_user} #{cfide_dir}/administrator/configmanager
+	      # Install the application
+	      e = execute "extract_configmanager" do
+	      	command <<-COMMAND
+	unzip -o #{Chef::Config['file_cache_path']}/configmanager.zip -d #{cfide_dir}/administrator/configmanager
+	chown -R  #{cf_user} #{cfide_dir}/administrator/configmanager
 COMMAND
-        action :nothing
-      end
+	        action :nothing
+	      end
 
-      e.run_action(:run)
-
+	      e.run_action(:run)
+      
+      else
+      	
+      	windows_zipfile "#{cfide_dir}/administrator" do
+					action :unzip
+					overwrite true
+					source "#{Chef::Config['file_cache_path']}/configmanager.zip"
+				end
+      
+    	end
+    
     end
 
   end
