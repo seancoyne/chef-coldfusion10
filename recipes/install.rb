@@ -58,12 +58,7 @@ cf_pkgs.each do |pkg|
 end unless platform_family?('windows')
 
 # Windows
-case node['kernel']['machine']
-when 'x86_64'
-	include_recipe "ms-cpp-redistributable::2008_x64" if platform_family?('windows')
-when /i[3-6]86/
-	include_recipe "ms-cpp-redistributable::2008_x86" if platform_family?('windows')
-end
+include_recipe "ms-cpp-redistributable::2008_x86" if platform_family?('windows')
 
 # Setup runtime user
 user node['cf10']['installer']['runtimeuser'] do
