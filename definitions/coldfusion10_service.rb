@@ -6,6 +6,7 @@ define :coldfusion10_service do
     pattern "\\-Dcoldfusion\\.home=#{node['cf10']['installer']['install_folder'].gsub('/','\\\\/')}\\/#{params[:instance]} .* com\\.adobe\\.coldfusion\\.bootstrap\\.Bootstrap \\-start" unless platform_family?("windows")
     status_command "ps -ef | grep '\\-Dcoldfusion\\.home=#{node['cf10']['installer']['install_folder'].gsub('/','\\\\/')}\\/#{params[:instance]} .* com\\.adobe\\.coldfusion\\.bootstrap\\.Bootstrap \\-start'" if platform_family?("rhel")
     supports :restart => true
+    timeout 600
     action [ :enable, :start ]
   end
 
