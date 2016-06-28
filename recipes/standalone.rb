@@ -57,7 +57,7 @@ end
 # Start ColdFusion immediatly so we can initilize it
 execute "start_cf_for_coldfusion10_standalone" do
  if platform_family?('windows')
- 	command "true"
+ 	command "echo true"
  else
  	command "/bin/true"
  end 
